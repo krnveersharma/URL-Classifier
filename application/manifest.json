@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "URL Classifier",
+  "version": "1.0",
+  "description": "Classify URLs based on extracted features.",
+  "permissions": ["activeTab", "http://127.0.0.1:5000/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+  
+    }
+  },
+  "icons": {
+
+  }
+}
