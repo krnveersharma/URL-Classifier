@@ -19,4 +19,5 @@ from ml import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('feedback/', views.feedback,name='feedback'),
+    path('extract_features_and_predict/', views.extract_features_and_predict,name='extract_features_and_predict'),
 ]

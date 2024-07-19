@@ -15,7 +15,13 @@ import numpy as np
 import os
 from django.conf import settings
 from .models import UrlMetrics  
+import json
 
+def load_model():
+    model_path = os.path.join(settings.BASE_DIR, 'ml/models/best_lgbm_model.pkl')
+    with open(model_path, 'rb') as pkl_file:
+        model = pickle.load(pkl_file)
+    return model
 
 # Function to count specific characters in a string
 def count_characters(s, chars):
@@ -218,7 +224,6 @@ def extract_features(url):
     # External features
     external_features = fetch_external_features(url, domain)
     features.update(external_features)
-    print(features)
     return features
 @csrf_exempt 
 def feedback(request):
@@ -357,3 +362,22 @@ def feedback(request):
             return HttpResponse('Missing data', status=400)
 
     return HttpResponse('Invalid request method', status=400)
+@csrf_exempt
+def extract_features_and_predict(request):
+    if(request.method=="POST"):
+        data=json.loads(request.body)
+        url = data.get('url') 
+        if url:
+            features = extract_features(url)
+            model=load_model()
+            if model:
+                sample_features_array = np.array([list(features.values())])
+                predictions = model.predict(sample_features_array)
+                
+                return JsonResponse({'features': features, 'predictions': predictions.tolist()})
+            else:
+                return JsonResponse({'error': 'Model not losaded'}), 500
+        else:
+            return JsonResponse({'error': 'URL not provided'}), 400
+
+
